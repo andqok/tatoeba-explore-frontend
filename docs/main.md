@@ -1,0 +1,1 @@
+Probabilistically find correspondence between sentences of one subtitles file on the basis of another, thus synchronizing them. This goal requires basic "understanding" of text content in different languages

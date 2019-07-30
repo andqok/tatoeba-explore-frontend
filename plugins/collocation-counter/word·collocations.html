@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Document</title>
+  <meta http-equiv="Content-Type" 
+        content="text/html; charset=UTF-8">
+  <meta name="viewport"  
+        content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css?family=Inconsolata" 
+        rel="stylesheet">
+  <style>
+
+    table {
+      border-collapse: collapse;
+      border-spacing: 0;
+    }
+
+    td {
+      padding: 4px;
+      border:  1px solid black;
+    }
+
+    #page-wrapper {
+      margin-left: auto;
+      margin-right: auto;
+      width: 799px;
+    }
+
+    .grey {
+      background-color: silver;
+    }
+  </style>
+</head>
+<body>
+    <div id="page-wrapper">
+      <div>
+        Select a text file: 
+        <input type="file" id="fileInput">
+      </div>
+      <table id="tabka">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+<script>
+
+window.onload = function() {
+var       fileInput = document.getElementById('fileInput');
+var fileDisplayArea = document.getElementById('fileDisplayArea');
+
+fileInput.addEventListener('change', function(e) {
+var file = fileInput.files[0];
+var reader = new FileReader();
+reader.readAsText(file);    
+reader.onload = function(e) {
+    collocationCounter.count(reader.result)
+    }
+});
+}
+
+const collocationCounter = {
+    count: function (i) {
+        let words = this.wordArray(i)
+        var wordFreq = {}
+        words = words.map(word => {
+            return word.toLowerCase()
+        })
+        words.forEach(word => {
+            this.addWord(wordFreq, word)
+        })
+        this.reverse(wordFreq)
+
+        var y = { 2: {}, 3: {}, 4: {} }
+
+        for (let index = 0; index < words.length; index += 1) {
+            this.recourse(words.slice(index, index + 4), y, 4)
+        }
+
+        var res = this.reverse(y['2'])
+        document.body.appendChild(
+            document.createTextNode( 
+                JSON.stringify( this.reverse(y['3']), null, 2) 
+            ) 
+        )
+
+    },
+    wordArray: function (str) {
+        return str.match(/\S+/g).map(word => {
+            return this.clearPunctuation(word)
+        }).filter(word => {
+            if (word !== '') return word
+        })
+    },
+    addWord: function (wordFreq, word) {
+        word = word.toLowerCase()
+        if (!wordFreq.hasOwnProperty(word)) {
+            wordFreq[word] = 1
+        } else {
+            wordFreq[word] += 1
+        }
+    },
+    reverse: function (wordFreq) {
+        var reversed = {}
+        for (let word in wordFreq) {
+            let freq = wordFreq[word]
+            if (reversed[freq]) {
+                reversed[freq].push(word)
+            } else {
+                reversed[freq] = [word]
+            }
+        }
+        delete reversed['1']
+        //console.log(reversed)
+        return reversed
+    },
+    recourse: function (sequence, y, level) {
+        if (level === 1) return false
+        let key = sequence.join(' ')
+        if (y[level][key]) {
+            y[level][key] += 1
+        } else {
+            y[level][key] = 1
+        }
+        this.recourse(sequence.slice(0, sequence.length - 1), y, level - 1)
+    },
+    clearPunctuation: function(word) {
+        if (typeof word === 'string') {
+            word = word.replace(/[\n,.?!:;()¿¡"«»\\%—–…]/g, "")
+            word = word.replace(/\`/g, "\'")
+            return word
+        }
+    }
+}
+
+  </script>
+</body>
+</html>

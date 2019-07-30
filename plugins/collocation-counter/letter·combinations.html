@@ -1,0 +1,88 @@
+<html>
+
+<head>
+  <script>
+    const combos = {
+        '2x': {},
+        '3x': {}
+    }
+    const allowed = 'q w e r t y u i o p a s d f g h j k l z x c v b n m'.split(' ')
+    var openFile = function (event) {
+      var input = event.target;
+
+      var reader = new FileReader();
+      reader.onload = function () {
+        var text = reader.result//.split('\n');
+        var node = document.getElementById('output');
+        node.innerText = text;
+        processCombo(text, '2x')
+        console.log(combos['2x'])
+      };
+      reader.readAsText(input.files[0]);
+    };
+    function processCombo (text, combo) {
+        text.split('\n').forEach(line => {
+            line.split(' ').forEach(word => {
+                var arr = word.toLowerCase().split('')
+                for (let i = 0; i < arr.length - 1; i += 1) {
+                    let letter = arr[i]
+                    let nextLetter = arr[i + 1]
+
+                        if (combos[combo][letter]) {
+                            if (combos[combo][letter][nextLetter] >= 0) {
+                                combos[combo][letter][nextLetter] += 1
+                            } else if (allowed.includes(nextLetter)) {
+                                combos[combo][letter][nextLetter] = 1
+                            }
+                        } else if (allowed.includes(letter)) {
+                            combos[combo][letter] = {}
+                            allowed.forEach(el => {
+                                combos[combo][letter][el] = 0
+                            })
+                        }
+
+
+                }
+            })
+
+            
+        })
+    }
+// a — aa aq ;  ~~~~~~  ao ae aj 
+// b — bf bg bh bk bp bq bw bx bz ;  ~~~~~~~~  bc bd bn 
+// c — cb cj cv cw cx ;  ~~~~~~~  cf cg cn cp
+// d — dk dq dz ;  ~~~~~~  dc dh dj dp dt dx
+// e — ez
+// f — fc fd fg fh fj fk fm fn fp fq fv fw fx fz
+// g — gb gj gk gq gv gx gz ;  ~~~~~~~  gc gd gf
+// h — hg hj hq hv hx;  ~~~~~~~  hb hc hf hh hk hp hw hz
+// i — iy iw ;  ~~~~~~~  ih ij
+// j — jb jc jd jf jg jh jj jl jm jn jp jq jt jv jw jx jy jz;     ji jk jr js
+// k — kj kq kv kx kz ;  ~~~~~~  kb kc kd kk km kp kr
+// l — lj lq lx ;  ~~~~~~  lb lh ln lz
+// m — md mj mk mq mt mv mx mz ; ~~~~~~ mc mf mg mh mn mr mw
+// n — nq nw nx nz
+// o — oq oz
+// p — pj pq pv px pz ; ~~~~~~ pb pc pf pg pk pn pw
+// q — qa qb qc qd qe qf qg qh qi qj qk ql qm qn qo qp qq qr qs qt qv qw qx qy qz
+// r — rj rq ; ~~~~~~ rx rz
+// s — sj sv sx sz ; ~~~~~~ sb sd sr
+// t — tj tq tx ; ~~~~~~ tb td tg tk tp tv
+// u — uj uq ; ~~~~~~ uh uk uo uu uv uw ux uz
+// v — vb vd vf vg vh vj vk vn vp vq vt vv vw vx vz ; ~~~~~~ vl vm vr vs vu
+// w — wj wq wv wx wz ; ~~~~~~ wb wc wd wf wg wk wm wu ww wy
+// x — xb xd xg xj xk xn xq xr xz ; ~~~~~~ xf xh xl xm xo xs xu xv xw xx
+// y — yf yj yk yq yv yx yy ; ~~~~~~ yg yh yr yu yz
+// zb zc zd zf zg zh zj zk zq zr zt zv zx ; ~~~~~~ zl zm zn zu zw
+  </script>
+</head>
+
+<body>
+  <input type='file' accept='text/plain' onchange='openFile(event)'>
+  <br>
+  <div id='output'>
+    ...
+  </div>
+</body>
+
+</html>
